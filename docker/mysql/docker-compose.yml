@@ -20,7 +20,7 @@ services:
       --collation-server=utf8mb4_unicode_ci
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:apache
+    image: phpmyadmin:apache
     container_name: phpmyadmin
     restart: always
     depends_on:

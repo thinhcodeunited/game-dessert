@@ -20,7 +20,7 @@ services:
       --collation-server=utf8mb4_unicode_ci
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:apache
     container_name: phpmyadmin
     restart: always
     depends_on:
@@ -30,7 +30,6 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      UPLOAD_LIMIT: 300M
     ports:
       - "${PHPMYADMIN_PORT}:80"
 

@@ -3,6 +3,7 @@
 /node_modules
 /build
 /cache
+/uploads/logos/*
 
 # Logs
 logs

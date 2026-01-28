@@ -42,6 +42,7 @@ lerna-debug.log*
 .env.test
 .env.production
 .env.local
+docker/mysql/.env
 
 # temp directory
 .temp

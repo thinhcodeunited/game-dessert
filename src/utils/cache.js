@@ -150,6 +150,7 @@ const CacheUtils = {
       ['homepage-games', 'categories-with-games'],
       ['homepage-games', 'discovery-games'],
       ['homepage-games', 'featured-games'],
+      ['homepage-games', 'latest-games'],
       ['homepage-games', 'popular-tags'],
       ['homepage-games', 'top-searches'],
       // New randomized categories cache
@@ -203,6 +204,7 @@ const CacheUtils = {
       ['homepage-games', 'categories-with-games'],
       ['homepage-games', 'discovery-games'],
       ['homepage-games', 'featured-games'],
+      ['homepage-games', 'latest-games'],
       ['homepage-games', 'popular-tags'],
       ['homepage-games', 'top-searches'],
       ['homepage-randomized-categories', 'randomized-categories-with-games']

@@ -24,7 +24,54 @@
 
         <!-- main content -->
         <main class="container mx-auto px-4 sm:px-6 py-6 lg:py-8 space-y-8 lg:space-y-12">
-
+              <!-- Latest games -->
+              <% if (latestGames && latestGames.length > 0) { %>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <% latestGames.forEach(game => { %>
+                        <a href="/play/<%= game.slug %>" class="group" system-nav>
+                            <div class="game-thumbnail aspect-square rounded-2xl overflow-hidden transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1 relative" data-game-id="<%= game.id %>">
+                                <!-- Featured Badge -->
+                                <div class="absolute top-2 left-2 z-10">
+                                    <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md border border-yellow-300/50">
+                                        <%= __('games.featured_badge') %>
+                                    </span>
+                                </div>
+                                
+                                <% if (game.parsedThumbnail && game.parsedThumbnail.webp && game.parsedThumbnail.original) {
+                                    let webpImage = game.parsedThumbnail.webp.thumbnail || game.parsedThumbnail.webp.standard;
+                                    let originalImage = game.parsedThumbnail.original.thumbnail || game.parsedThumbnail.original.standard;
+                                    
+                                    if (webpImage && originalImage) { %>
+                                        <picture>
+                                            <source srcset="/<%= webpImage.relativePath %>" type="image/webp">
+                                            <img src="/<%= originalImage.relativePath %>" alt="<%= game.title %>" class="w-full h-full object-cover" loading="lazy">
+                                        </picture>
+                                    <% } else { %>
+                                        <img src="https://dummyimage.com/200x200/9CA3AF/FFFFFF?text=<%= encodeURIComponent(game.title) %>" alt="<%= game.title %>" class="w-full h-full object-cover" loading="lazy">
+                                    <% }
+                                } else if (game.thumbnail) { %>
+                                    <img src="<%= game.thumbnail.startsWith('/') ? game.thumbnail : '/' + game.thumbnail %>" alt="<%= game.title %>" class="w-full h-full object-cover" loading="lazy">
+                                <% } else { %>
+                                    <img src="https://dummyimage.com/200x200/9CA3AF/FFFFFF?text=<%= encodeURIComponent(game.title) %>" alt="<%= game.title %>" class="w-full h-full object-cover" loading="lazy">
+                                <% } %>
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex flex-col items-center justify-between p-3">
+                                    <!-- Play Icon -->
+                                    <div class="flex-1 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z"/>
+                                        </svg>
+                                    </div>
+                                    <!-- Game Title at Bottom -->
+                                    <div class="text-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                        <h3 class="font-bold text-sm line-clamp-2"><%= game.title %></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    <% }); %>
+                </div>
+                <% } %>
+                
             <!-- Featured Games Grid -->
             <% if (featuredGames && featuredGames.length > 0) { %>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">

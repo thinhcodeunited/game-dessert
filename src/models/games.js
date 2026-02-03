@@ -131,6 +131,28 @@ const getFeaturedGames = async (limit = 20, offset = 0) => {
     }
 }
 
+const getLatestGames = async (limit = 6, offset = 0) => {
+    try {
+        const safeLimit = Math.min(parseInt(limit) || 6, 6); // tối đa 6
+        const safeOffset = parseInt(offset) || 0;
+
+        const data = await executeQuery(
+            `SELECT g.*, c.name AS category_name
+             FROM games g
+             LEFT JOIN categories c ON g.category_id = c.id
+             WHERE g.is_active = 1
+             ORDER BY g.created_at DESC
+             LIMIT ? OFFSET ?`,
+            [safeLimit, safeOffset]
+        );
+
+        return data;
+    } catch (error) {
+        consoleLog('database', 'Error fetching latest games', { error: error.message });
+        return [];
+    }
+};
+
 const getRecentGames = async (userId = null, limit = 20, offset = 0) => {
     // Ensure parameters are integers to avoid MySQL type issues
     const safeLimit = parseInt(limit) || 20;
@@ -578,6 +600,7 @@ export {
     getPopularGames,
     getTrendingGames,
     getFeaturedGames,
+    getLatestGames,
     getRecentGames,
     getFavoriteGames,
     getAllGames,

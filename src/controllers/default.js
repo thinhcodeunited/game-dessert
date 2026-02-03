@@ -19,6 +19,7 @@ import {
     getPopularGames, 
     getTrendingGames, 
     getFeaturedGames,
+    getLatestGames,
     getRecentGames, 
     getFavoriteGames, 
     getAllGames,
@@ -61,13 +62,14 @@ const parseThumbnailData = (games) => {
 const index = async (req, res) => {
     try {
         // Try to get cached categories with games, top searches, popular tags, discovery games, featured games, and hall of fame
-        let [categoriesWithGames, topSearches, popularTags, discoveryGames, featuredGames, hallOfFameUsers] = await Promise.all([
+        let [categoriesWithGames, topSearches, popularTags, discoveryGames, featuredGames, hallOfFameUsers, latestGames] = await Promise.all([
             CacheUtils.get('homepage-randomized-categories', 'randomized-categories-with-games'),
             CacheUtils.get('homepage-games', 'top-searches'),
             CacheUtils.get('homepage-games', 'popular-tags'),
             CacheUtils.get('homepage-games', 'discovery-games'),
             CacheUtils.get('homepage-games', 'featured-games'),
-            CacheUtils.get('homepage-games', 'hall-of-fame-users')
+            CacheUtils.get('homepage-games', 'hall-of-fame-users'),
+            CacheUtils.get('homepage-games', 'latest-games')
         ]);
         
         if (!categoriesWithGames) {
@@ -155,6 +157,12 @@ const index = async (req, res) => {
             featuredGames = await getFeaturedGames(6); // Get top 6 featured games for homepage
             await CacheUtils.put('homepage-games', 'featured-games', featuredGames);
         }
+
+        if (!latestGames) {
+            // Cache miss - fetch featured games
+            latestGames = await getLatestGames(6); // Get top 6 latest games for homepage
+            await CacheUtils.put('homepage-games', 'latest-games', latestGames);
+        }
         
         if (!hallOfFameUsers) {
             // Cache miss - fetch top 5 users by total experience (consistent with leaderboard)
@@ -174,6 +182,20 @@ const index = async (req, res) => {
         // Parse image data for featured games
         if (featuredGames && featuredGames.length > 0) {
             featuredGames = featuredGames.map(game => {
+                if (game.thumbnail && typeof game.thumbnail === 'string' && game.thumbnail.startsWith('{')) {
+                    try {
+                        game.parsedThumbnail = JSON.parse(game.thumbnail);
+                    } catch (e) {
+                        game.parsedThumbnail = null;
+                    }
+                }
+                return game;
+            });
+        }
+
+        // Parse image data for featured games
+        if (latestGames && latestGames.length > 0) {
+            latestGames = latestGames.map(game => {
                 if (game.thumbnail && typeof game.thumbnail === 'string' && game.thumbnail.startsWith('{')) {
                     try {
                         game.parsedThumbnail = JSON.parse(game.thumbnail);
@@ -252,6 +274,7 @@ const index = async (req, res) => {
             popularTags: popularTags || [],
             discoveryGames: discoveryGames || [],
             featuredGames: featuredGames || [],
+            latestGames: latestGames || [],
             hallOfFameUsers: hallOfFameUsers || [],
             jsonLdScripts,
             socialMetaTags
@@ -268,6 +291,7 @@ const index = async (req, res) => {
             description: i18n.translateSync('games.fallback.description', {}, req.language?.current || 'en'),
             categories: [],
             featuredGames: [],
+            latestGames: [],
             discoveryGames: [],
             topSearches: [],
             popularTags: [],
